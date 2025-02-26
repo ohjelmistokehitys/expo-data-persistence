@@ -1,13 +1,12 @@
 import { Paragraph, Screen, Title } from '@/utils/components';
-import { Alert, TextInput } from "react-native";
+import { Alert, Button, TextInput, View } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import { styles } from '@/utils/styles';
 
 async function readFromStorage(key: string) {
   try {
-    let value = await AsyncStorage.getItem(key);
-    return value;
+    return await AsyncStorage.getItem(key);
   } catch (error) {
     Alert.alert('Error when reading data');
     throw error;
@@ -29,19 +28,16 @@ export default function Index() {
 
   const [text, setText] = useState("");
 
-  // on first load, we read the text from storage:
-  useEffect(() => {
-    readFromStorage(key).then(storedValue => {
-      if (storedValue) {
-        setText(storedValue)
-      }
-    });
-  }, []);
-
-  // every time the text changes, update it in store:
-  useEffect(() => {
+  function saveDraft() {
     saveToStorage(key, text);
-  }, [text]);
+  }
+
+  async function loadDraft() {
+    const storedValue = await readFromStorage(key);
+    if (storedValue) {
+      setText(storedValue);
+    }
+  }
 
   return <Screen>
 
@@ -51,6 +47,10 @@ export default function Index() {
 
     <Paragraph>Try the following field. It will presist the value between app restarts using async storage.</Paragraph>
 
-    <TextInput value={text} onChangeText={setText} style={styles.textInput} />
+    <View style={{ gap: 20 }}>
+      <TextInput value={text} onChangeText={setText} style={styles.textInput} />
+      <Button title="Save draft 💾" onPress={saveDraft} />
+      <Button title="Restore draft ↖️" onPress={loadDraft} />
+    </View>
   </Screen>;
 }

@@ -1,4 +1,5 @@
 import { Paragraph, Screen, Title } from "@/utils/components";
+import { styles } from "@/utils/styles";
 import { openDatabaseSync } from 'expo-sqlite';
 import { useEffect, useState } from "react";
 import { Button, FlatList, Text, TextInput, View } from "react-native";
@@ -26,7 +27,10 @@ export default function Index() {
   const [title, setTitle] = useState('');
   const [courses, setCourses] = useState<Course[]>([]);
 
-  useEffect(() => { initialize() }, []);
+  useEffect(() => {
+    initialize();
+    updateList();
+  }, []);
 
   const saveItem = async () => {
     try {
@@ -66,12 +70,14 @@ export default function Index() {
 
       <TextInput
         placeholder='Title'
-        onChangeText={title => setTitle(title)}
+        style={styles.textInput}
+        onChangeText={setTitle}
         value={title} />
       <TextInput
         placeholder='Credits'
+        style={styles.textInput}
         keyboardType='numeric'
-        onChangeText={credit => setCredit(credit)}
+        onChangeText={setCredit}
         value={credit} />
       <Button onPress={saveItem} title="Save" />
 

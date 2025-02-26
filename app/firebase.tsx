@@ -1,7 +1,9 @@
+import { database } from "@/firebaseConfig";
 import { Paragraph, Screen, Title } from "@/utils/components";
 import { styles } from "@/utils/styles";
-import { useState } from "react";
-import { Button, FlatList, Text, TextInput, View } from "react-native";
+import { onValue, push, ref } from "firebase/database";
+import { useEffect, useState } from "react";
+import { Button, FlatList, Text, TextInput } from "react-native";
 
 type Product = { title: string, amount: string };
 
@@ -11,8 +13,16 @@ export default function Index() {
   const [items, setItems] = useState<Product[]>([]);
 
   const handleSave = () => {
-    setItems([...items, product]);
+    push(ref(database, "items/"), product);
   }
+
+  useEffect(() => {
+    onValue(ref(database, "items/"), (snapshot) => {
+      const data = snapshot.val();
+      const firebaseItems = Object.values(data);
+      setItems(firebaseItems as Product[]);
+    })
+  }, []);
 
   return (
     <Screen>
