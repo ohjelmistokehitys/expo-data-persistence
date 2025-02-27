@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 
+// TODO: add your own config from Firebase console
 const firebaseConfig = {
     apiKey: "",
     authDomain: "",

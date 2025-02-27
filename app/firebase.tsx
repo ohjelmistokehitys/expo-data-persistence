@@ -17,7 +17,10 @@ export default function Index() {
   }
 
   useEffect(() => {
-    onValue(ref(database, "items/"), (snapshot) => {
+    // onValue returns a function that can be invoked to remove the listener,
+    // which is then returned to useEffect. React calls that function when
+    // unmounting the component.
+    return onValue(ref(database, "items/"), (snapshot) => {
       const data = snapshot.val();
       const firebaseItems = Object.values(data);
       setItems(firebaseItems as Product[]);
