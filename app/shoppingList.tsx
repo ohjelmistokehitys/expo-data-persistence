@@ -1,9 +1,9 @@
-import { Paragraph, Screen, StyledInput, Title } from "@/utils/components";
-import { createDatabase, Item } from "@/utils/shoppingListDatabase";
+import { Screen, StyledInput, Title } from "@/utils/components";
+import { createDatabase, Item, useShoppingListDatabase } from "@/utils/shoppingListDatabase";
 import { styles } from "@/utils/styles";
-import { SQLiteProvider, useSQLiteContext } from "expo-sqlite";
-import { useEffect, useState } from "react";
-import { Button, FlatList, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { SQLiteProvider } from "expo-sqlite";
+import { useState } from "react";
+import { Button, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
 /**
  * In a more typical setup, the whole app could be wrapped in SQLiteProvider.
@@ -16,28 +16,7 @@ export default function SqliteWrapper() {
 
 
 function ShoppingList() {
-    const [items, setItems] = useState<Item[]>([]);
-    const db = useSQLiteContext();
-
-    const addItem = async (newItem: Item) => {
-        db.runAsync("INSERT INTO ShoppingList (title, amount) VALUES (?, ?)", newItem.title, newItem.amount);
-        getItems();
-    }
-
-    const removeItem = async (remove: Item) => {
-        db.runAsync("DELETE FROM ShoppingList WHERE id = ?", remove.id!);
-        getItems();
-    }
-
-    const getItems = async () => {
-        const rows = await db.getAllAsync("SELECT * FROM ShoppingList") as Item[];
-        setItems(rows);
-        console.log(rows);
-    }
-
-    useEffect(() => {
-        getItems();
-    }, []);
+    const { items, addItem, removeItem } = useShoppingListDatabase();
 
     return <Screen>
         <Title>Shopping list</Title>
@@ -57,12 +36,18 @@ type FormProps = {
 };
 
 function CreateItemForm({ addItem }: FormProps) {
-    const [item, setItem] = useState<Item>({ title: "", amount: "" });
+    const [inputs, setInputs] = useState<Item>({ title: "", amount: "" });
 
+    const save = () => {
+        addItem(inputs);
+        setInputs({ title: "", amount: "" });
+    }
     return <View>
-        <StyledInput placeholder="Item title" value={item.title} onChangeText={title => setItem({ ...item, title })} />
-        <StyledInput placeholder="Amount" value={item.amount} onChangeText={amount => setItem({ ...item, amount })} />
-        <Button title="Save" onPress={() => addItem(item)} />
+        <StyledInput placeholder="Item title" value={inputs.title}
+            onChangeText={title => setInputs({ ...inputs, title })} />
+        <StyledInput placeholder="Amount" value={inputs.amount}
+            onChangeText={amount => setInputs({ ...inputs, amount })} />
+        <Button title="Save" onPress={() => save()} />
     </View>
 
 }
@@ -89,7 +74,8 @@ const shoppingStyles = StyleSheet.create({
         fontWeight: "bold",
     },
     itemAmount: {
-        flexGrow: 1
+        flexGrow: 1,
+        marginLeft: 10
     },
     removeButton: {
         width: 40,
