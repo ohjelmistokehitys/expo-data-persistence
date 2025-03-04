@@ -8,6 +8,9 @@ export const styles = StyleSheet.create({
         alignItems: "center",
         padding: 20
     },
+    scrollView: {
+        width: "100%"
+    },
     title: {
         fontSize: 20,
         marginBottom: 20,

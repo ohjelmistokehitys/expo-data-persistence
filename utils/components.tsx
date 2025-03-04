@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Text, View } from "react-native";
+import { Text, TextInput, TextInputProps, View } from "react-native";
 import { styles } from "./styles";
 
 type ParentProps = {
@@ -22,4 +22,8 @@ export function Screen({ children }: ParentProps) {
     return <View style={styles.screen}>
         {children}
     </View>
+}
+
+export function StyledInput(props: TextInputProps) {
+    return <TextInput {...props} style={styles.textInput} />
 }
