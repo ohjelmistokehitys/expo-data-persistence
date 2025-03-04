@@ -2,7 +2,7 @@ import { SQLiteDatabase, useSQLiteContext } from "expo-sqlite"
 import { useEffect, useState } from "react";
 
 export type Item = {
-    id?: number,
+    id?: number | string,
     title: string,
     amount: string
 }
