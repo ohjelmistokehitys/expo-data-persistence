@@ -2,7 +2,7 @@ import { StyledInput } from "@/utils/components";
 import { Item } from "@/utils/shoppingListDatabase";
 import { styles } from "@/utils/styles";
 import { useState } from "react";
-import { Button, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Button, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
 type FormProps = {
     addItem: (x: Item) => void
@@ -12,6 +12,10 @@ export function CreateItemForm({ addItem }: FormProps) {
     const [inputs, setInputs] = useState<Item>({ title: "", amount: "" });
 
     const save = () => {
+        if (!inputs.amount || !inputs.title) {
+            Alert.alert("Title and amout are required!");
+            return;
+        }
         addItem(inputs);
         setInputs({ title: "", amount: "" });
     }
@@ -22,9 +26,17 @@ export function CreateItemForm({ addItem }: FormProps) {
             onChangeText={amount => setInputs({ ...inputs, amount })} />
         <Button title="Save" onPress={() => save()} />
     </View>
-
 }
 
+type TableProps = { items: Item[], removeItem: (x: Item) => void };
+
+export function ShoppingListTable({ items, removeItem }: TableProps) {
+    return <FlatList
+        data={items}
+        style={styles.scrollView}
+        renderItem={({ item }) => <ShoppingListRow key={item.id} item={item} remove={removeItem} />}
+    />
+}
 
 type RowProps = {
     item: Item,
@@ -38,18 +50,6 @@ export function ShoppingListRow({ item, remove }: RowProps) {
         <Pressable style={shoppingStyles.removeButton} onPress={() => remove(item)}><Text>🗑️</Text></Pressable>
     </View>
 }
-
-
-type TableProps = { items: Item[], removeItem: (x: Item) => void };
-
-export function ShoppingListTable({ items, removeItem }: TableProps) {
-    return <FlatList
-        data={items}
-        style={styles.scrollView}
-        renderItem={({ item }) => <ShoppingListRow key={item.id} item={item} remove={removeItem} />}
-    />
-}
-
 
 const shoppingStyles = StyleSheet.create({
     row: {

@@ -25,19 +25,19 @@ export function useShoppingListDatabase() {
     const [items, setItems] = useState<Item[]>([]);
 
     const addItem = async (newItem: Item) => {
-        db.runAsync("INSERT INTO ShoppingList (title, amount) VALUES (?, ?)", newItem.title, newItem.amount);
-        getItems();
-    }
+        await db.runAsync("INSERT INTO ShoppingList (title, amount) VALUES (?, ?)", newItem.title, newItem.amount);
+        await getItems();
+    };
 
     const removeItem = async (remove: Item) => {
-        db.runAsync("DELETE FROM ShoppingList WHERE id = ?", remove.id!);
-        getItems();
-    }
+        await db.runAsync("DELETE FROM ShoppingList WHERE id = ?", remove.id!);
+        await getItems();
+    };
 
     const getItems = async () => {
         const rows = await db.getAllAsync("SELECT * FROM ShoppingList") as Item[];
         setItems(rows);
-    }
+    };
 
     useEffect(() => {
         getItems();
@@ -47,5 +47,5 @@ export function useShoppingListDatabase() {
         items,
         addItem,
         removeItem
-    }
+    };
 }
