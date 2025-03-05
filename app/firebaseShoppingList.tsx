@@ -22,11 +22,14 @@ export default function Index() {
     return onValue(ref(database, "items/"), (snapshot) => {
       const data = snapshot.val() as Record<string, Item>;
 
-      // put the id in each object:
-      const firebaseItems = Object.entries(data).map(([id, item]) => ({ ...item, id }));
+      if (data) {
+        // put the id in each object:
+        const itemsWithId = Object.entries(data).map(([id, item]) => ({ ...item, id }));
+        setItems(itemsWithId as Item[]);
+      } else {
+        setItems([]);
+      }
 
-      setItems(firebaseItems as Item[]);
-      console.log(firebaseItems);
     })
   }, []);
 
