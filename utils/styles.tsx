@@ -4,17 +4,16 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        justifyContent: "center",
+        justifyContent: "flex-start",
         alignItems: "center",
-        padding: 20
+        padding: 20,
+        gap: 20,
     },
     title: {
         fontSize: 20,
-        marginBottom: 20,
         width: "100%"
     },
     paragraph: {
-        marginBottom: 20,
         width: "100%"
     },
     link: {
@@ -26,5 +25,13 @@ export const styles = StyleSheet.create({
         minWidth: 150,
         borderColor: "black",
         borderWidth: 1
+    },
+    list: {
+        alignSelf: "stretch",
+        paddingHorizontal: 40
+    },
+    listItem: {
+        fontSize: 18,
+        marginBottom: 10
     }
-})
+});
