@@ -1,6 +1,8 @@
+import { database } from "@/firebaseConfig";
 import { Paragraph, Screen, Title } from "@/utils/components";
 import { styles } from "@/utils/styles";
-import { useState } from "react";
+import { onValue, push, ref } from "firebase/database";
+import { useEffect, useState } from "react";
 import { Button, FlatList, Text, TextInput } from "react-native";
 
 type Product = { title: string, amount: string };
@@ -9,6 +11,22 @@ export default function Index() {
 
     const [product, setProduct] = useState<Product>({ title: '', amount: '' });
     const [items, setItems] = useState<Product[]>([]);
+
+    function handleSave(p: Product) {
+        push(ref(database, "items/"), p);
+        setProduct({ title: "", amount: "" });
+    }
+
+    useEffect(() => {
+        const unsubscribe = onValue(ref(database, "items/"), (snapshot) => {
+            console.log(snapshot.val());
+            const productList: Product[] = Object.values(snapshot.val());
+            setItems(productList);
+        });
+
+        // return function to unsubscribe from the listener when the component unmounts
+        return unsubscribe;
+    }, []);
 
     return (
         <Screen>
@@ -34,7 +52,7 @@ export default function Index() {
                 value={product.amount}
             />
 
-            <Button onPress={() => setItems([...items, product])} title="Save" />
+            <Button onPress={() => handleSave(product)} title="Save" />
 
             <FlatList
                 renderItem={({ item }) =>

@@ -1,18 +1,10 @@
 import { Paragraph, Screen, Title } from "@/utils/components";
+import { useStoredState } from "@/utils/hooks";
 import { styles } from "@/utils/styles";
-import { openDatabaseSync } from 'expo-sqlite';
+import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
 import { Button, FlatList, Text, TextInput, View } from "react-native";
 
-const db = openDatabaseSync('coursedb');
-
-const initialize = async () => {
-    try {
-        await db.execAsync('CREATE TABLE IF NOT EXISTS course (id INTEGER PRIMARY KEY NOT NULL, credits INT, title TEXT);');
-    } catch (error) {
-        console.error('Could not open database', error);
-    }
-}
 
 type Course = {
     id: number,
@@ -20,13 +12,15 @@ type Course = {
     credits: string
 }
 
-export default function Index() {
-    const [credit, setCredit] = useState('');
-    const [title, setTitle] = useState('');
+export default function CourseList() {
+    const [title, setTitle] = useStoredState('course-title');
+    const [credit, setCredit] = useStoredState('course-credits');
+
     const [courses, setCourses] = useState<Course[]>([]);
 
+    const db = useSQLiteContext();
+
     useEffect(() => {
-        initialize();
         updateList();
     }, []);
 
@@ -64,11 +58,11 @@ export default function Index() {
             <Title>SQLite</Title>
 
             <Paragraph>
-                SQLite is light-weight SQL database and it is built into both Android and iOS devices.expo-sqlite is the library that gives an access to SQLite database on the device.
+                SQLite is light-weight SQL database and it is built into both Android and iOS devices. expo-sqlite is the library that gives an access to SQLite database on the device.
             </Paragraph>
 
             <TextInput
-                placeholder='Course name'
+                placeholder='Course title'
                 style={styles.textInput}
                 onChangeText={setTitle}
                 value={title} />
